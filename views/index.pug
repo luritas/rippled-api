@@ -1,0 +1,284 @@
+html
+	head
+		title!= title
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		style(type='text/css').
+			.json-pretty {
+				padding-left: 30px;
+				padding-right: 30px;
+				font-family: Menlo, Monaco, "Courier New", monospace;
+				font-weight: normal;
+				font-size: 14px;
+				line-height: 16px;
+				letter-spacing: 0;
+				background-color: #24282A;
+				color: #d4d4d4;
+				text-align: left;
+				border-top: 1px solid #121516;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				margin: 0;
+			}
+			.json-selected {
+				background-color: rgba(139, 191, 228, 0.19999999999999996);
+			}
+
+			.json-string {
+				color: #6caedd;
+			}
+
+			.json-key {
+				color: #ec5f67;
+			}
+
+			.json-boolean {
+				color: #99c794;
+			}
+
+			.json-number {
+				color: #99c794;
+			}
+			div.line {
+				margin-bottom: 15px;
+			}
+			div.line > span {
+				margin-right: 15px;
+			}
+			div.line > button {
+				margin-left: 15px;
+			}
+			div.line > a {
+				margin-left: 15px;
+			}
+	body
+		- let url = 'http://s1.dotorie.com:8080';
+		<div class=container>
+			p!= serverInfo
+			<table class="table">
+				<thead>
+					<tr>
+						<td></td>
+						<td>API 이름(문서)</td>
+						<td>필수 값</td>
+						<td>실행</td>
+						<td>비고</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td></td>
+						<td>수수료<a href='https://developers.ripple.com/rippleapi-reference.html#getfee' target='_blank'>(getFee)</a></td>
+						<td><input class='fee' placeholder="없음" readonly></td>
+						<td class='ajax'>
+							a(
+								href=url + '/fee/'
+								class='fee'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>원장버전<a href='https://developers.ripple.com/rippleapi-reference.html#getledgerversion' target='_blank'>(getLedgerVersion)</a></td>
+						<td><input class='ledgerVersion' placeholder="없음" readonly></td>
+						<td class='ajax'>
+							a(
+								href=url + '/ledger-version/'
+								class='ledgerVersion'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>지갑거래내역<a href='https://developers.ripple.com/rippleapi-reference.html#gettransactions' target='_blank'>(getTransactions)</a></td>
+						<td><input class='transactions' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/transactions/'
+								class='transactions'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>거래내역상세<a href='https://developers.ripple.com/rippleapi-reference.html#gettransactions' target='_blank'>(getTransaction)</a></td>
+						<td><input class='transaction' placeholder="거래ID"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/transaction/'
+								class='transaction'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>신뢰연결<a href='https://developers.ripple.com/rippleapi-reference.html#gettrustlines' target='_blank'>(getTrustlines)</a></td>
+						<td><input class='trustlines' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/trustlines/'
+								class='trustlines'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>잔액<a href='https://developers.ripple.com/rippleapi-reference.html#getbalances' target='_blank'>(getBalances)</a></td>
+						<td><input class='balance' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/balance/'
+								class='balance'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>잔액시트<a href='https://developers.ripple.com/rippleapi-reference.html#getbalancesheet' target='_blank'>(getBalanceSheet)</a></td>
+						<td><input class='balancesheet' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/balancesheet/'
+								class='balancesheet'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>지급경로<a href='https://developers.ripple.com/rippleapi-reference.html#getpaths' target='_blank'>(getPaths)</a></td>
+						<td><input class='paths' placeholder="구현중..." readonly></td>
+						<td class='ajax'>
+							a(
+								href=url + '/paths/'
+								class='paths'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>주문<a href='https://developers.ripple.com/rippleapi-reference.html#getorders' target='_blank'>(getOrders)</a></td>
+						<td><input class='orders' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/orders/'
+								class='orders'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>주문book<a href='https://developers.ripple.com/rippleapi-reference.html#getorderbook' target='_blank'>(getOrderbook)</a></td>
+						<td><input class='orderbook' placeholder="구현중..." readonly></td>
+						<td class='ajax'>
+							a(
+								href=url + '/orderbook/'
+								class='orderbook'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>세팅정보<a href='https://developers.ripple.com/rippleapi-reference.html#getsettings' target='_blank'>(getSettings)</a></td>
+						<td><input class='settings' placeholder="지갑주소" readonly></td>
+						<td class='ajax'>
+							a(
+								href=url + '/settings/'
+								class='settings'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>지갑정보<a href='https://developers.ripple.com/rippleapi-reference.html#getaccountinfo' target='_blank'>(getAccountInfo)</a></td>
+						<td><input class='accountinfo' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/accountinfo/'
+								class='accountinfo'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>지갑객체<a href='https://developers.ripple.com/rippleapi-reference.html#getaccountobjects' target='_blank'>(getAccountObjects)</a></td>
+						<td><input class='accountobjects' placeholder="지갑주소"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/accountobjects/'
+								class='accountobjects'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>지급채널<a href='https://developers.ripple.com/rippleapi-reference.html#getpaymentchannel' target='_blank'>(getPaymentChannel)</a></td>
+						<td><input class='paymentchannel' placeholder="채널ID"></td>
+						<td class='ajax'>
+							a(
+								href=url + '/paymentchannel/'
+								class='paymentchannel'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>원장<a href='https://developers.ripple.com/rippleapi-reference.html#getledger' target='_blank'>(getLedger)</a></td>
+						<td><input class='ledger' placeholder="없음" readonly></td>
+						<td class='ajax'>
+							a(
+								href=url + '/ledger/'
+								class='ledger'
+								target='_blank'
+							) 보기
+						</td>
+						<td></td>
+					</tr>
+					
+					
+				</tbody>
+			</table>
+		</div>
+		
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",crossorigin="anonymous")
+
+		script(type='text/javascript').
+			$('.ajax a').on('click', function (e) {
+				e.preventDefault();
+				url = $(this).attr('href') + $('.' + $(this).attr('class')).val();
+				console.log(url);
+				$.get(url, function(data, status){
+					$('.json-pretty').html(data);
+				});
+			    //var win = window.open(url, '_blank');
+				//win.focus();
+			});
+			
+			    
+			
