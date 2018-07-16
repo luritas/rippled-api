@@ -1,5 +1,6 @@
 'use stric';
 const { RippleAPI } = require('ripple-lib');
+const bodyParser = require('body-parser');
 let prettyHtml = require('json-pretty-html').default;
 let fs = require('fs');
 let express = require('express');
@@ -36,6 +37,12 @@ const api = new RippleAPI({
 
 app.set('views', './views');
 app.set('view engine', 'pug');
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+// app.use(bodyParser.json())]
 
 app.get('/', async (req, res) => {
 	await api.connect();
@@ -224,15 +231,9 @@ app.get('/settings/:address', async (req, res) => {
 
 app.get('/accountinfo/:address', async (req, res) => {
     await api.connect();   
-    const settings = await api.getAccountInfo(req.params.address);
+    const account = await api.getAccountInfo(req.params.address);
     api.disconnect();
-	let html = prettyHtml(settings, {
-		"length": 7.0,
-		"width": 12.0,
-		"height": 9.5
-	},);
-
-    res.send(html);
+    res.send(account);
 });
 
 app.get('/accountobjects/:address', async (req, res) => {
@@ -321,12 +322,44 @@ app.get('/all', async (req, res) => {
 });
 
 
-app.get('/transfer', async (req, res) => {
+app.post('/transfer', async (req, res) => {
+    console.log(req.body);
 	await api.connect();
-    const RIPPLE_FROM_ADDRESS = req.query.from;
-    const RIPPLE_FROM_SECRET = req.query.secret;
-    const RIPPLE_TO_ADDRESS = req.query.to;
-    const RIPPLE_AMOUNT = req.query.amount;
+    const RIPPLE_FROM_ADDRESS = req.body.from;
+    const RIPPLE_FROM_SECRET = req.body.secret;
+    const RIPPLE_TO_ADDRESS = req.body.to;
+    const RIPPLE_AMOUNT = req.body.amount;
+
+    if (typeof RIPPLE_FROM_ADDRESS == 'undefined' || RIPPLE_FROM_ADDRESS == '') {
+        res.send({
+            'result': 'ng',
+            'message': '출금주소가 입력되지 않았습니다'
+        });
+        return;
+    }
+    console.log(typeof RIPPLE_FROM_SECRET == 'undefined');
+    if (typeof RIPPLE_FROM_SECRET == 'undefined' || RIPPLE_FROM_SECRET == '') {
+        res.send({
+            'result': 'ng',
+            'message': '출금주소 비밃번호가 입력되지 않았습니다'
+        });
+        return;
+    }
+    if (typeof RIPPLE_TO_ADDRESS == 'undefined' || RIPPLE_TO_ADDRESS == '') {
+        res.send({
+            'result': 'ng',
+            'message': '입금주소 주소가 입력되지 않았았습니다'
+        });
+        return;
+    }
+    if (typeof RIPPLE_AMOUNT == 'undefined' || RIPPLE_AMOUNT == '') {
+        res.send({
+            'result': 'ng',
+            'message': '송금할 금액을 입력해주세요'
+        });
+        return;
+    }
+    console.info(RIPPLE_FROM_ADDRESS, RIPPLE_FROM_SECRET, RIPPLE_TO_ADDRESS, RIPPLE_AMOUNT)
 
     const BEFORE_FROM_BALANCE = await api.getBalances(RIPPLE_FROM_ADDRESS);
     const BEFORE_TO_BALANCE = await api.getBalances(RIPPLE_TO_ADDRESS);
@@ -349,6 +382,8 @@ app.get('/transfer', async (req, res) => {
       }
     };
 
+    console.log(payment);
+
     // Get ready to submit the payment
     const prepared = await api.preparePayment(RIPPLE_FROM_ADDRESS, payment, {
       maxLedgerVersionOffset: 5
@@ -358,7 +393,7 @@ app.get('/transfer', async (req, res) => {
     console.log('Signed', signedTransaction)
 
     // Submit the payment
-    const res = await api.submit(signedTransaction);
+    const response = await api.submit(signedTransaction);
 
     console.log('Done', res);
     const AFTER_FROM_BALANCE = await api.getBalances(RIPPLE_FROM_ADDRESS);
@@ -371,16 +406,18 @@ app.get('/transfer', async (req, res) => {
             'from': RIPPLE_FROM_ADDRESS,
             'to': RIPPLE_TO_ADDRESS,
             'amount': RIPPLE_AMOUNT
-        }
+        },
         'before_balance': {
-            'from': BEFORE_FROM_BALANCE
+            'from': BEFORE_FROM_BALANCE,
             'to': BEFORE_TO_BALANCE
         },
         'after_balance': {
-            'from': AFTER_FROM_BALANCE
+            'from': AFTER_FROM_BALANCE,
             'to': AFTER_TO_BALANCE
-        }
+        },
         'result': 'ok',
+        'message': '',
+        'response': JSON.stringify(response, null, 2)
     });
 });
 
