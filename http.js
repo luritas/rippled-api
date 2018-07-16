@@ -301,7 +301,7 @@ app.get('/all', async (req, res) => {
 	let length = 10;
 	let start = 0;
 	// let start = 32570;
-	let end = 39945392;
+	let end = 39976240;
 	for (let i = end; i > 550000; i--) {
 		console.info('i', i);
 		const ledger = await api.getLedger({
@@ -321,72 +321,10 @@ app.get('/all', async (req, res) => {
 });
 
 
-app.get('/transfer', async (req, res) => {
-	await api.connect();
-    const RIPPLE_FROM_ADDRESS = req.query.from;
-    const RIPPLE_FROM_SECRET = req.query.secret;
-    const RIPPLE_TO_ADDRESS = req.query.to;
-    const RIPPLE_AMOUNT = req.query.amount;
-
-    const BEFORE_FROM_BALANCE = await api.getBalances(RIPPLE_FROM_ADDRESS);
-    const BEFORE_TO_BALANCE = await api.getBalances(RIPPLE_TO_ADDRESS);
-
-    // Ripple payments are represented as JavaScript objects
-    const payment = {
-      source: {
-        address: RIPPLE_FROM_ADDRESS,
-        maxAmount: {
-          value: RIPPLE_AMOUNT,
-          currency: 'XRP'
-        }
-      },
-      destination: {
-        address: RIPPLE_TO_ADDRESS,
-        amount: {
-          value: RIPPLE_AMOUNT,
-          currency: 'XRP'
-        }
-      }
-    };
-
-    // Get ready to submit the payment
-    const prepared = await api.preparePayment(RIPPLE_FROM_ADDRESS, payment, {
-      maxLedgerVersionOffset: 5
-    });
-    // Sign the payment using the sender's secret
-    const { signedTransaction } = api.sign(prepared.txJSON, RIPPLE_FROM_SECRET);
-    console.log('Signed', signedTransaction)
-
-    // Submit the payment
-    const res = await api.submit(signedTransaction);
-
-    console.log('Done', res);
-    const AFTER_FROM_BALANCE = await api.getBalances(RIPPLE_FROM_ADDRESS);
-    const AFTER_TO_BALANCE = await api.getBalances(RIPPLE_TO_ADDRESS);
-
-	api.disconnect();
-
-    res.send({
-        'request_items': {
-            'from': RIPPLE_FROM_ADDRESS,
-            'to': RIPPLE_TO_ADDRESS,
-            'amount': RIPPLE_AMOUNT
-        }
-        'before_balance': {
-            'from': BEFORE_FROM_BALANCE
-            'to': BEFORE_TO_BALANCE
-        },
-        'after_balance': {
-            'from': AFTER_FROM_BALANCE
-            'to': AFTER_TO_BALANCE
-        }
-        'result': 'ok',
-    });
-});
 
 
 
-app.listen(8080, function () {
+app.listen(80, function () {
     console.log('Listening...');
 });
 
